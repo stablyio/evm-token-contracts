@@ -11,7 +11,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./extension/ERC20ComplianceUpgradeable.sol";
 
-contract StablyToken is
+contract ERC20Stablecoin is
     Initializable,
     ERC20Upgradeable,
     ERC20BurnableUpgradeable,
@@ -40,7 +40,6 @@ contract StablyToken is
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
-        // TODO grant role to compliance, or at least test it in a test
     }
 
     function decimals() public view virtual override returns (uint8) {
