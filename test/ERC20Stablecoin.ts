@@ -72,5 +72,24 @@ describe("ERC20Stablecoin", function () {
         "ERC20Compliance: account is frozen"
       );
     });
+
+    it("only compliance role can freeze, unfreeze and seize", async function () {
+      await token.mint(await random1.getAddress(), 100);
+      await expect(
+        token.connect(random1).freeze(await random1.getAddress())
+      ).to.be.revertedWith(
+        /AccessControl: account 0x[0-9a-fA-F]+ is missing role 0x442a94f1a1fac79af32856af2a64f63648cfa2ef3b98610a5bb7cbec4cee6985/
+      );
+      await expect(
+        token.connect(random1).unfreeze(await random1.getAddress())
+      ).to.be.revertedWith(
+        /AccessControl: account 0x[0-9a-fA-F]+ is missing role 0x442a94f1a1fac79af32856af2a64f63648cfa2ef3b98610a5bb7cbec4cee6985/
+      );
+      await expect(
+        token.connect(random1).seize(await random1.getAddress(), 100)
+      ).to.be.revertedWith(
+        /AccessControl: account 0x[0-9a-fA-F]+ is missing role 0x442a94f1a1fac79af32856af2a64f63648cfa2ef3b98610a5bb7cbec4cee6985/
+      );
+    });
   });
 });
