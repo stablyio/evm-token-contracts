@@ -1,0 +1,70 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
+
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+
+/**
+ * @dev Extension of {ERC20} that allows a compliance role to freeze and seize
+ * tokens for compliance purposes.
+ */
+abstract contract ERC20ComplianceUpgradeable is
+    Initializable,
+    ContextUpgradeable,
+    ERC20Upgradeable,
+    AccessControlUpgradeable
+{
+    bytes32 public constant COMPLIANCE_ROLE = keccak256("COMPLIANCE_ROLE");
+
+    mapping(address => bool) private _frozen;
+
+    function __ERC20Compliance_init() internal onlyInitializing {}
+
+    function __ERC20Compliance_init_unchained() internal onlyInitializing {}
+
+    modifier whenNotFrozen(address account) {
+        require(!_frozen[account], "ERC20Compliance: account is frozen");
+        _;
+    }
+
+    /**
+     * @dev Prevents an account from using their tokens.
+     */
+    function freeze(address account) public virtual onlyRole(COMPLIANCE_ROLE) {
+        _freeze(account);
+    }
+
+    function unfreeze(
+        address account
+    ) public virtual onlyRole(COMPLIANCE_ROLE) {
+        _unfreeze(account);
+    }
+
+    function seize(
+        address account,
+        uint256 amount
+    ) public virtual onlyRole(COMPLIANCE_ROLE) {
+        _seize(account, amount);
+    }
+
+    function _freeze(address account) internal virtual {
+        _frozen[account] = true;
+    }
+
+    function _unfreeze(address account) internal virtual {
+        _frozen[account] = false;
+    }
+
+    function _seize(address account, uint256 amount) internal virtual {
+        _burn(account, amount);
+    }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
+}
