@@ -16,8 +16,6 @@ abstract contract ERC20ComplianceUpgradeable is
     ERC20Upgradeable,
     AccessControlUpgradeable
 {
-    bytes32 public constant COMPLIANCE_ROLE = keccak256("COMPLIANCE_ROLE");
-
     mapping(address => bool) private _frozen;
 
     function __ERC20Compliance_init() internal onlyInitializing {}
@@ -27,26 +25,6 @@ abstract contract ERC20ComplianceUpgradeable is
     modifier whenNotFrozen(address account) {
         require(!_frozen[account], "ERC20Compliance: account is frozen");
         _;
-    }
-
-    /**
-     * @dev Prevents an account from using their tokens.
-     */
-    function freeze(address account) public virtual onlyRole(COMPLIANCE_ROLE) {
-        _freeze(account);
-    }
-
-    function unfreeze(
-        address account
-    ) public virtual onlyRole(COMPLIANCE_ROLE) {
-        _unfreeze(account);
-    }
-
-    function seize(
-        address account,
-        uint256 amount
-    ) public virtual onlyRole(COMPLIANCE_ROLE) {
-        _seize(account, amount);
     }
 
     function _freeze(address account) internal virtual {

@@ -11,7 +11,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./extension/ERC20ComplianceUpgradeable.sol";
 
-contract ERC20Stablecoin is
+contract ERC20StablecoinUpgradeable is
     Initializable,
     ERC20Upgradeable,
     ERC20BurnableUpgradeable,
@@ -23,6 +23,7 @@ contract ERC20Stablecoin is
 {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant COMPLIANCE_ROLE = keccak256("COMPLIANCE_ROLE");
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -36,6 +37,7 @@ contract ERC20Stablecoin is
         __AccessControl_init();
         __ERC20Permit_init("Stably USD");
         __ERC20FlashMint_init();
+        __ERC20Compliance_init();
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
@@ -56,6 +58,23 @@ contract ERC20Stablecoin is
 
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
         _mint(to, amount);
+    }
+
+    function freeze(address account) public virtual onlyRole(COMPLIANCE_ROLE) {
+        _freeze(account);
+    }
+
+    function unfreeze(
+        address account
+    ) public virtual onlyRole(COMPLIANCE_ROLE) {
+        _unfreeze(account);
+    }
+
+    function seize(
+        address account,
+        uint256 amount
+    ) public virtual onlyRole(COMPLIANCE_ROLE) {
+        _seize(account, amount);
     }
 
     function _beforeTokenTransfer(

@@ -2,24 +2,24 @@ import "@openzeppelin/hardhat-upgrades";
 import { ethers, upgrades } from "hardhat";
 import { Signer } from "ethers";
 import { expect } from "chai";
-import { ERC20Stablecoin } from "../typechain-types/contracts/ERC20Stablecoin";
+import { ERC20StablecoinUpgradeable } from "../typechain-types/contracts/ERC20StablecoinUpgradeable";
 
 describe("ERC20Stablecoin", function () {
   let owner: Signer;
   let compliance: Signer;
   let random1: Signer;
   let random2: Signer;
-  let token: ERC20Stablecoin;
+  let token: ERC20StablecoinUpgradeable;
 
   beforeEach(async function () {
     [owner, compliance, random1, random2] = await ethers.getSigners();
     const StablyTokenContract = await ethers.getContractFactory(
-      "ERC20Stablecoin",
+      "ERC20StablecoinUpgradeable",
       owner
     );
     token = (await upgrades.deployProxy(
       StablyTokenContract
-    )) as unknown as ERC20Stablecoin; // Casting to unknown first to resolve unmatched type resolution
+    )) as unknown as ERC20StablecoinUpgradeable; // Casting to unknown first to resolve unmatched type resolution
     await token.waitForDeployment();
   });
 
