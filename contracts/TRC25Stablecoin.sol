@@ -1,44 +1,29 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20FlashMintUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
-import "./extensions/ERC20ComplianceUpgradeable.sol";
+import "./bases/TRC25.sol";
+import "./extensions/TRC25Permit.sol";
+import "./extensions/TRC25Compliance.sol";
 
-contract ERC20StablecoinUpgradeable is
-    Initializable,
-    ERC20Upgradeable,
-    ERC20BurnableUpgradeable,
-    PausableUpgradeable,
-    AccessControlUpgradeable,
-    ERC20PermitUpgradeable,
-    ERC20FlashMintUpgradeable,
-    ERC20ComplianceUpgradeable
+contract TRC25Stablecoin is
+    TRC25,
+    TRC25Permit,
+    TRC25Compliance,
+    AccessControl,
+    Pausable
 {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant COMPLIANCE_ROLE = keccak256("COMPLIANCE_ROLE");
+    bytes32 public constant FEE_ROLE = keccak256("FEE_ROLE");
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    function initialize() public initializer {
-        __ERC20_init("Stably USD", "USDS");
-        __ERC20Burnable_init();
-        __Pausable_init();
-        __AccessControl_init();
-        __ERC20Permit_init("Stably USD");
-        __ERC20FlashMint_init();
-        __ERC20Compliance_init();
-
+    constructor(
+        string memory name,
+        string memory symbol
+    ) TRC25(name, symbol) EIP712(name, "1") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
@@ -75,6 +60,22 @@ contract ERC20StablecoinUpgradeable is
         uint256 amount
     ) public virtual onlyRole(COMPLIANCE_ROLE) {
         _seize(account, amount);
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(TRC25, AccessControl) returns (bool) {
+        return interfaceId == type(ITRC25).interfaceId;
+    }
+
+    function setFee(uint256 fee) external virtual onlyRole(FEE_ROLE) {
+        _setFee(fee);
+    }
+
+    function _estimateFee(
+        uint256
+    ) internal view virtual override returns (uint256) {
+        return minFee();
     }
 
     function _beforeTokenTransfer(

@@ -4,7 +4,6 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 /**
  * @dev Extension of {ERC20} that allows a compliance role to freeze and seize
@@ -13,8 +12,7 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 abstract contract ERC20ComplianceUpgradeable is
     Initializable,
     ContextUpgradeable,
-    ERC20Upgradeable,
-    AccessControlUpgradeable
+    ERC20Upgradeable
 {
     mapping(address => bool) private _frozen;
 
