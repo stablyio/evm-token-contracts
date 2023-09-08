@@ -27,6 +27,7 @@ contract TRC25Stablecoin is
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
+        _grantRole(FEE_ROLE, msg.sender);
     }
 
     function decimals() public view virtual override returns (uint8) {

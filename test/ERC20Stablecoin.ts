@@ -38,6 +38,94 @@ describe("ERC20Stablecoin", function () {
     );
   });
 
+  describe("role permissions", function () {
+    describe("DEFAULT_ADMIN_ROLE", function () {
+      it("should be set to deployer", async function () {
+        expect(
+          await token.hasRole(await token.DEFAULT_ADMIN_ROLE(), owner)
+        ).to.equal(true);
+      });
+
+      it("should be rotatable", async function () {
+        await token.grantRole(
+          await token.DEFAULT_ADMIN_ROLE(),
+          await random1.getAddress()
+        );
+        expect(
+          await token.hasRole(await token.DEFAULT_ADMIN_ROLE(), random1)
+        ).to.equal(true);
+        await token.revokeRole(
+          await token.DEFAULT_ADMIN_ROLE(),
+          await owner.getAddress()
+        );
+        expect(
+          await token.hasRole(await token.DEFAULT_ADMIN_ROLE(), owner)
+        ).to.equal(false);
+      });
+    });
+
+    describe("PAUSER_ROLE", function () {
+      it("should be assigned to the deployer", async function () {
+        expect(await token.hasRole(await token.PAUSER_ROLE(), owner)).to.equal(
+          true
+        );
+      });
+
+      it("should allow pauser to pause and unpause", async function () {
+        await token.mint(await owner.getAddress(), 100);
+
+        await token.pause();
+        expect(await token.paused()).to.equal(true);
+        await expect(
+          token.transfer(await random1.getAddress(), 100)
+        ).to.be.revertedWith("Pausable: paused");
+
+        await token.unpause();
+        expect(await token.paused()).to.equal(false);
+        await token.transfer(await random1.getAddress(), 100);
+        expect(await token.balanceOf(await random1.getAddress())).to.equal(100);
+      });
+
+      it("should not allow non-pauser to pause and unpause", async function () {
+        await expect(token.connect(random1).pause()).to.be.revertedWith(
+          /AccessControl: account 0x[0-9a-fA-F]+ is missing role 0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a/
+        );
+        await expect(token.connect(random1).unpause()).to.be.revertedWith(
+          /AccessControl: account 0x[0-9a-fA-F]+ is missing role 0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a/
+        );
+      });
+    });
+
+    describe("MINTER_ROLE", function () {
+      it("should be assigned to the deployer", async function () {
+        expect(await token.hasRole(await token.MINTER_ROLE(), owner)).to.equal(
+          true
+        );
+      });
+
+      it("should allow the minter to mint", async function () {
+        await token.mint(await random1.getAddress(), 100);
+        expect(await token.balanceOf(await random1.getAddress())).to.equal(100);
+      });
+
+      it("should not allow non-minter to mint", async function () {
+        await expect(
+          token.connect(random1).mint(await random1.getAddress(), 100)
+        ).to.be.revertedWith(
+          /AccessControl: account 0x[0-9a-fA-F]+ is missing role 0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6/
+        );
+      });
+    });
+
+    describe("COMPLIANCE_ROLE", function () {
+      it("should not be assigned initially", async function () {
+        expect(
+          await token.hasRole(await token.COMPLIANCE_ROLE(), owner)
+        ).to.equal(false);
+      });
+    });
+  });
+
   describe("compliance capabilities", function () {
     this.beforeEach(async function () {
       await token.grantRole(
