@@ -29,6 +29,7 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "coverage": "hardhat coverage",
-    "deploy": "hardhat deploy"
+    "deploy": "hardhat deploy",
+    "wallet:generate": "ts-node ./utils/walletGen.ts"
   }
 }
