@@ -9,7 +9,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const deployed = await deploy("TRC25Stablecoin", {
     from: deployer,
-    args: ["USDV", "USDV"],
+    args: ["CUSD", "CUSD"],
     log: true,
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
   });
