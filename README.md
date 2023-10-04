@@ -3,6 +3,7 @@
 Monorepo that contains our EVM token contracts. 
 
 ## History
+
 This repository is the successor to previous Truffle based repositories including:
 - https://github.com/stablyio/usds-horizen-eon
 - https://github.com/stablyio/usds-arbitrum
