@@ -1,8 +1,7 @@
 import { Wallet } from "ethers";
 import crypto from "crypto";
 
-const id: string = crypto.randomBytes(32).toString("hex");
-const privateKey: string = "0x" + id;
+const privateKey: string = crypto.randomBytes(32).toString("hex");
 console.log("Private Key:", privateKey);
 
 const wallet: Wallet = new Wallet(privateKey);
