@@ -30,12 +30,15 @@ contract ERC20StablecoinUpgradeable is
         _disableInitializers();
     }
 
-    function initialize() public initializer {
-        __ERC20_init("Stably USD", "USDS");
+    function initialize(
+        string memory name,
+        string memory symbol
+    ) public initializer {
+        __ERC20_init(name, symbol);
         __ERC20Burnable_init();
         __Pausable_init();
         __AccessControl_init();
-        __ERC20Permit_init("Stably USD");
+        __ERC20Permit_init(name);
         __ERC20FlashMint_init();
         __ERC20Compliance_init();
 

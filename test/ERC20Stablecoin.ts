@@ -17,9 +17,10 @@ describe("ERC20Stablecoin", function () {
       "ERC20StablecoinUpgradeable",
       owner
     );
-    token = (await upgrades.deployProxy(
-      StablyTokenContract
-    )) as unknown as ERC20StablecoinUpgradeable; // Casting to unknown first to resolve unmatched type resolution
+    token = (await upgrades.deployProxy(StablyTokenContract, [
+      "Stably USD",
+      "USDS",
+    ])) as unknown as ERC20StablecoinUpgradeable; // Casting to unknown first to resolve unmatched type resolution
     await token.waitForDeployment();
   });
 
