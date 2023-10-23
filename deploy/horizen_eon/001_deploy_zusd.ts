@@ -11,10 +11,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const deployed = await deploy("ERC20StablecoinUpgradeable", {
     from: deployer,
     proxy: {
-      methodName: "initialize", // The name of the function call and pass args to after it's deployed
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: ["ZEN USD", "ZUSD"],
+        },
+      },
       proxyContract: "OpenZeppelinTransparentProxy",
     },
-    args: ["ZEN USD", "ZUSD"],
     log: true,
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
   });
