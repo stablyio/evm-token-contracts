@@ -23,20 +23,41 @@ const config: HardhatUserConfig = {
         path: "m/44'/889'/0'/0", // Trustwallet HDW path
       },
     },
+    horizen_eon_testnet: {
+      url: "https://gobi-rpc.horizenlabs.io/ethv1",
+      deploy: ["deploy/horizen_eon/"],
+      accounts: {
+        mnemonic: getMnemonic("horizen_eon_testnet"),
+      },
+    },
+    horizen_eon_mainnet: {
+      url: "https://eon-rpc.horizenlabs.io/ethv1",
+      deploy: ["deploy/horizen_eon/"],
+      accounts: {
+        mnemonic: getMnemonic("horizen_eon_mainnet"),
+      },
+    },
   },
   namedAccounts: {
     deployer: {
       default: 0, // here this will by default take the first account as deployer
+      // TomoChain
       tomochain_testnet: "0x7f195FDdf37D48aCD075db34B62E7e13118A1BC1",
       tomochain_mainnet: "0x6fC35BFd8A82d44Cd33b637B9e6888735cBe9051",
+      // Horizen
+      horizen_eon_testnet: "0x7f195FDdf37D48aCD075db34B62E7e13118A1BC1",
     },
     minter: {
       default: 1, // here this will by default take the second account as feeCollector (so in the test this will be a different account than the deployer)
+      // TomoChain
       tomochain_testnet: "0x7f195FDdf37D48aCD075db34B62E7e13118A1BC1",
       tomochain_mainnet: "0x314a20b4D07875c7f2A9Fd168702DA749742A143",
+      // Horizen
+      horizen_eon_testnet: "0xbF464732Fa68466D3f2f67d3E7704859292363BC",
     },
     feeRole: {
       default: 2, // here this will by default take the third account as feeCollector (so in the test this will be a different account than the deployer)
+      // TomoChain
       tomochain_testnet: "0x7f195FDdf37D48aCD075db34B62E7e13118A1BC1",
       tomochain_mainnet: "0x68436Daf37393854d93448b6f123e6225C416825",
     },

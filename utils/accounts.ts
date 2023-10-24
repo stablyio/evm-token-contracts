@@ -1,10 +1,10 @@
 export function getMnemonic(networkName: string): string {
-  const mnemonic = process.env["MNEMONIC_" + networkName.toUpperCase()];
+  const mnemonicKey = "MNEMONIC_" + networkName.toUpperCase();
+  const mnemonic = process.env[mnemonicKey];
   if (mnemonic && mnemonic !== "") {
     return mnemonic;
   }
-  // Fail if no mnemonic was found
-  throw new Error(
-    "Please set your MNEMONIC_* in a .env file or set it as an environment variable."
-  );
+  // Return empty if no mnemonic is found, since we may not be using this mnemonic
+  console.log(".env value was empty for: " + mnemonicKey);
+  return "";
 }
