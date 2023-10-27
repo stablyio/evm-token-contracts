@@ -38,6 +38,7 @@ const config: HardhatUserConfig = {
       },
     },
   },
+  // For more readable deploy scripts
   namedAccounts: {
     deployer: {
       default: 0, // here this will by default take the first account as deployer
@@ -64,6 +65,22 @@ const config: HardhatUserConfig = {
       tomochain_testnet: "0x7f195FDdf37D48aCD075db34B62E7e13118A1BC1",
       tomochain_mainnet: "0x68436Daf37393854d93448b6f123e6225C416825",
     },
+  },
+  // For contract source verification
+  etherscan: {
+    apiKey: {
+      tomochain_mainnet: "tomoscan2023",
+    },
+    customChains: [
+      {
+        network: "tomochain_mainnet",
+        chainId: 88, // for mainnet
+        urls: {
+          apiURL: "https://tomoscan.io/api/contract/hardhat/verify", // for mainnet
+          browserURL: "https://tomoscan.io", // for mainnet
+        },
+      },
+    ],
   },
 };
 
