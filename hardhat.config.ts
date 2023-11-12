@@ -70,6 +70,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       tomochain_mainnet: "tomoscan2023",
+      horizen_eon_mainnet: "no API key required",
     },
     customChains: [
       {
@@ -78,6 +79,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://tomoscan.io/api/contract/hardhat/verify", // for mainnet
           browserURL: "https://tomoscan.io", // for mainnet
+        },
+      },
+      {
+        network: "horizen_eon_mainnet",
+        chainId: 7332, // for mainnet
+        urls: {
+          apiURL: "https://eon-explorer.horizenlabs.io/api", // for mainnet
+          browserURL: "https://eon-explorer.horizenlabs.io", // for mainnet
         },
       },
     ],
