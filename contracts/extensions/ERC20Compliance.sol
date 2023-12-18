@@ -12,7 +12,7 @@ abstract contract ERC20Compliance is ERC20 {
     mapping(address => bool) private _frozen;
 
     modifier whenNotFrozen(address account) {
-        require(!_frozen[account], "TRC25Compliance: account is frozen");
+        require(!_frozen[account], "ERC20Compliance: account is frozen");
         _;
     }
 
