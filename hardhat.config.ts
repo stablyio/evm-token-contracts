@@ -9,14 +9,14 @@ const config: HardhatUserConfig = {
   solidity: "0.8.19",
   networks: {
     tomochain_testnet: {
-      url: "https://rpc.testnet.tomochain.com",
+      url: "https://rpc-testnet.viction.xyz",
       deploy: ["deploy/tomochain/"],
       accounts: {
         mnemonic: getMnemonic("tomochain_testnet"),
       },
     },
     tomochain_mainnet: {
-      url: "https://rpc.tomochain.com",
+      url: "https://rpc.viction.xyz",
       deploy: ["deploy/tomochain/"],
       accounts: {
         mnemonic: getMnemonic("tomochain_mainnet"),
