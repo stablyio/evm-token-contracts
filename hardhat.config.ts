@@ -37,6 +37,13 @@ const config: HardhatUserConfig = {
         mnemonic: getMnemonic("horizen_eon_mainnet"),
       },
     },
+    fraxtal_testnet: {
+      url: "https://rpc.testnet.frax.com",
+      deploy: ["deploy/fraxtal/"],
+      accounts: {
+        mnemonic: getMnemonic("fraxtal_testnet"),
+      },
+    },
   },
   // For more readable deploy scripts
   namedAccounts: {
@@ -48,6 +55,8 @@ const config: HardhatUserConfig = {
       // Horizen
       horizen_eon_testnet: "0x7f195FDdf37D48aCD075db34B62E7e13118A1BC1",
       horizen_eon_mainnet: "0xB46c23C5102dd7458152bEB9f223e2F2B1d826Ef",
+      // Fraxtal
+      fraxtal_testnet: "0x7f195FDdf37D48aCD075db34B62E7e13118A1BC1",
     },
     minter: {
       default: 1, // here this will by default take the second account as feeCollector (so in the test this will be a different account than the deployer)
@@ -57,6 +66,8 @@ const config: HardhatUserConfig = {
       // Horizen
       horizen_eon_testnet: "0xbF464732Fa68466D3f2f67d3E7704859292363BC",
       horizen_eon_mainnet: "0x81ef98BccAB82B94c72992aBC98E340b12e43C74",
+      // Fraxtal
+      fraxtal_testnet: "0xbF464732Fa68466D3f2f67d3E7704859292363BC",
     },
     // Only for TRC25
     feeRole: {
