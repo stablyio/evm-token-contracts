@@ -25,11 +25,62 @@ async function upload(user: BlockChainUser, name: string, source: string, args: 
 }
 
 async function call(blockchainUser: BlockChainUser, method: string, contract: Contract, args: any) {
-  return await rest.call(blockchainUser, {contract, method, args}, options);
+  return await rest.call(blockchainUser, {contract, method, args}, { isDetailed: true, ...options});
 }
 
 async function state(user: BlockChainUser, contract:Contract) {
   return await rest.getState(user, contract, options);
+}
+
+async function indexCertificate (user: BlockChainUser) {
+  const KEY_ENDPOINT = `/cirrus/search/Certificate?userAddress=eq.${user.address}`;
+  const url = `${config.nodes[0].url}${KEY_ENDPOINT}`;
+  try{
+    const index = await axios
+      .get(url, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      })
+    return { status: 200, message: 'success', certificate: index.data[0]}
+    } catch (e: any) {
+      return {
+        // eslint-disable-next-line no-nested-ternary
+        status: e.response
+          ? e.response.status
+          : e.code
+            ? e.code
+            : 'NO_CONNECTION',
+        message: 'error while getting certificate from Cirrus',
+      }
+    }
+}
+
+async function indexEvent(user: BlockChainUser, contract:Contract, eventName: string, txHash: string) {
+  const { certificate } = await indexCertificate(user) || ""
+  const KEY_ENDPOINT = `/cirrus/search/${certificate.organization}-${contract.name}.${eventName}?transaction_hash=eq.${txHash}`;
+  const url = `${config.nodes[0].url}${KEY_ENDPOINT}`;
+  try{
+    const index = await axios
+      .get(url, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      })
+    return { status: 200, message: 'success', events: index.data}
+    } catch (e: any) {
+      return {
+        // eslint-disable-next-line no-nested-ternary
+        status: e.response
+          ? e.response.status
+          : e.code
+            ? e.code
+            : 'NO_CONNECTION',
+        message: 'error while getting event from Cirrus',
+      }
+    }
 }
 
 async function getStratoUserFromToken(accessToken: string) {
@@ -119,15 +170,26 @@ describe('SolidVM-Compatible ERC20StablecoinWithMemo', function() {
         })
 
         // check for event emission
-        await call(deployer, "transferWithMemo", ERC20StablecoinWithMemo, {
+        const tx_result = await call(deployer, "transferWithMemo", ERC20StablecoinWithMemo, {
           memo: testMemoValue,
           to: testUser.address,
           value: 100,
         })
         
-        // TODO
-        // check TransferWithMemo event
-        // expect: (owner, random1, 100, testMemoValue)
+        const { events }  = await indexEvent(deployer, ERC20StablecoinWithMemo, "TransferWithMemo", tx_result.hash)
+        const expected = {
+          from: deployer.address,
+          to: testUser.address,
+          value: 100,
+          memo: testMemoValue
+        }
+        const got = {
+          from: events[0].from,
+          to: events[0].to,
+          value: events[0].value,
+          memo: events[0].memo
+        }
+        expect(expected === got)
         
         await state(deployer, ERC20StablecoinWithMemo).then(state => expect(state[testUser.address] == 100))
       });
@@ -137,15 +199,14 @@ describe('SolidVM-Compatible ERC20StablecoinWithMemo', function() {
             to: deployer.address,
             amount: 100
           })
-
-          // TODO
-          // check TransferWithMemo event
-          // it should NOT exist after calling normal transfer
           
-          await call(deployer, "transfer", ERC20StablecoinWithMemo, {
+          const tx_result = await call(deployer, "transfer", ERC20StablecoinWithMemo, {
             to: testUser.address,
             amount: 100
           })
+
+          const { events }  = await indexEvent(deployer, ERC20StablecoinWithMemo, "TransferWithMemo", tx_result.hash)
+          expect(events.length == 0)
 
           await state(deployer, ERC20StablecoinWithMemo).then(state => expect(state[testUser.address] == 100))
         });
@@ -166,21 +227,27 @@ describe('SolidVM-Compatible ERC20StablecoinWithMemo', function() {
           spender: testUser.address,
         })
         
-        await call(deployer, "transferFromWithMemo", ERC20StablecoinWithMemo, {
-          from: deployer.address,
-          to: testUser.address,
+        const tx_result = await call(testUser, "transferFromWithMemo", ERC20StablecoinWithMemo, {
+          from: testUser.address,
+          to: deployer.address,
           value: 100,
           memo: testMemoValue
         })
 
-        // TODO
-        //   .to.emit(token, "TransferWithMemo")
-        //   .withArgs(
-        //     await owner.getAddress(),
-        //     await random1.getAddress(),
-        //     100,
-        //     testMemoValue
-        //   );
+        const { events }  = await indexEvent(deployer, ERC20StablecoinWithMemo, "TransferWithMemo", tx_result.hash)
+        const expected = {
+          from: deployer.address,
+          to: testUser.address,
+          value: 100,
+          memo: testMemoValue
+        }
+        const got = {
+          from: events[0].from,
+          to: events[0].to,
+          value: events[0].value,
+          memo: events[0].memo
+        }
+        expect(expected === got)
 
         await state(deployer, ERC20StablecoinWithMemo).then(state => expect(state[testUser.address] == 100))
       });
@@ -196,16 +263,15 @@ describe('SolidVM-Compatible ERC20StablecoinWithMemo', function() {
           spender: testUser.address,
         })
 
-        // TODO
-        // await expect(
-        //   token
-        //     .connect(random1)
-        //     .transferFrom(
-        //       await owner.getAddress(),
-        //       await random1.getAddress(),
-        //       100
-        //     )
-        // ).to.not.emit(token, "TransferWithMemo");
+        const tx_result = await call(testUser, "transferFrom", ERC20StablecoinWithMemo, {
+          from: deployer.address,
+          to: testUser.address,
+          amount: 100
+        })
+
+        const { events }  = await indexEvent(deployer, ERC20StablecoinWithMemo, "TransferWithMemo", tx_result.hash)
+        expect(events.length == 0)
+
         await state(deployer, ERC20StablecoinWithMemo).then(state => expect(state[testUser.address] == 100))
       });
     });
