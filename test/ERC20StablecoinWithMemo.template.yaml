@@ -1,0 +1,12 @@
+apiDebug: false
+timeout: 600000
+
+nodes:
+  - id: 0
+    label: <node_alias>
+    url: <node_url>
+    oauth:
+      openIdDiscoveryUrl: >-
+        <openIdDiscoveryUrl>
+      clientId: <clientId>
+      clientSecret: <clientSecret>
