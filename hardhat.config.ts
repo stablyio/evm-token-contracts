@@ -51,6 +51,20 @@ const config: HardhatUserConfig = {
         mnemonic: getMnemonic("fraxtal_mainnet"),
       },
     },
+    fraxtal_testnet_usds: {
+      url: "https://rpc.testnet.frax.com",
+      deploy: ["deploy/fraxtal_usds/"],
+      accounts: {
+        mnemonic: getMnemonic("fraxtal_testnet"),
+      },
+    },
+    fraxtal_mainnet_usds: {
+      url: "https://rpc.frax.com",
+      deploy: ["deploy/fraxtal_usds/"],
+      accounts: {
+        mnemonic: getMnemonic("fraxtal_mainnet"),
+      },
+    },
   },
   // For more readable deploy scripts
   namedAccounts: {
