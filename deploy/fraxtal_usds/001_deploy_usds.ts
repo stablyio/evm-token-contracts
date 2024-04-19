@@ -24,11 +24,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 
   // Set the minter role
-  const cusd = await hre.ethers.getContractAt(
+  const usds = await hre.ethers.getContractAt(
     "ERC20StablecoinUpgradeable",
     deployed.address
   );
-  await cusd.grantRole(await cusd.MINTER_ROLE(), minter);
+  await usds.grantRole(await usds.MINTER_ROLE(), minter);
 };
 export default func;
 func.tags = ["ERC20StablecoinUpgradeable"];
