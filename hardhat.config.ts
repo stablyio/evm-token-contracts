@@ -65,6 +65,20 @@ const config: HardhatUserConfig = {
         mnemonic: getMnemonic("fraxtal_mainnet"),
       },
     },
+    fraxtal_testnet_dusd: {
+      url: "https://rpc.testnet.frax.com",
+      deploy: ["deploy/fraxtal_dusd/"],
+      accounts: {
+        mnemonic: getMnemonic("fraxtal_testnet"),
+      },
+    },
+    fraxtal_mainnet_dusd: {
+      url: "https://rpc.frax.com",
+      deploy: ["deploy/fraxtal_dusd/"],
+      accounts: {
+        mnemonic: getMnemonic("fraxtal_mainnet"), // Same deployer as CUSD
+      },
+    },
   },
   // For more readable deploy scripts
   namedAccounts: {
@@ -78,7 +92,9 @@ const config: HardhatUserConfig = {
       horizen_eon_mainnet: "0xB46c23C5102dd7458152bEB9f223e2F2B1d826Ef",
       // Fraxtal
       fraxtal_testnet: "0x7f195FDdf37D48aCD075db34B62E7e13118A1BC1",
-      fraxtal_mainnet: "0x0f5e3D9AEe7Ab5fDa909Af1ef147D98a7f4B3022",
+      fraxtal_mainnet: "0x0f5e3D9AEe7Ab5fDa909Af1ef147D98a7f4B3022", // CUSD
+      fraxtal_mainnet_usds: "0x0f5e3D9AEe7Ab5fDa909Af1ef147D98a7f4B3022", // Same deployer as CUSD
+      fraxtal_mainnet_dusd: "0x0f5e3D9AEe7Ab5fDa909Af1ef147D98a7f4B3022", // Same deployer as CUSD
     },
     minter: {
       default: 1, // here this will by default take the second account as feeCollector (so in the test this will be a different account than the deployer)
@@ -90,7 +106,9 @@ const config: HardhatUserConfig = {
       horizen_eon_mainnet: "0x81ef98BccAB82B94c72992aBC98E340b12e43C74",
       // Fraxtal
       fraxtal_testnet: "0xbF464732Fa68466D3f2f67d3E7704859292363BC",
-      fraxtal_mainnet: "0xcc2B17Aa1b532581781a45A54C0F05196cd30551",
+      fraxtal_mainnet: "0xcc2B17Aa1b532581781a45A54C0F05196cd30551", // CUSD
+      fraxtal_mainnet_usds: "0x80FD39ac091e9Da40116338A154F1934cb3F05EC", // Different issuer than CUSD
+      fraxtal_mainnet_dusd: "0x80FD39ac091e9Da40116338A154F1934cb3F05EC", // Same issuer as USDS
     },
     // Only for TRC25
     feeRole: {
