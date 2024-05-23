@@ -62,7 +62,7 @@ const config: HardhatUserConfig = {
       url: "https://rpc.frax.com",
       deploy: ["deploy/fraxtal_usds/"],
       accounts: {
-        mnemonic: getMnemonic("fraxtal_mainnet"),
+        mnemonic: getMnemonic("fraxtal_mainnet"), // Same deployer as CUSD
       },
     },
     fraxtal_testnet_dusd: {
