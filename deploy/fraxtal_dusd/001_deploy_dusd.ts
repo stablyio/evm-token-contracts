@@ -14,7 +14,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       execute: {
         init: {
           methodName: "initialize",
-          args: ["dTrinity USD", "DUSD"],
+          args: ["dTRINITY USD", "dUSD"],
         },
       },
       proxyContract: "OpenZeppelinTransparentProxy",
