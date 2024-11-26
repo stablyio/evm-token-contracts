@@ -2,7 +2,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 async function main(hre: HardhatRuntimeEnvironment) {
   // Arguments
-  const newMinterAddress = "0x823fd0227CE89Dc6694A213e9F9D3d64F5d4715C";
+  const minterToRevokeAddress = "0x0f5e3D9AEe7Ab5fDa909Af1ef147D98a7f4B3022";
   const contractAddress = "0x788D96f655735f52c676A133f4dFC53cEC614d4A";
 
   // Get the signer
@@ -18,12 +18,12 @@ async function main(hre: HardhatRuntimeEnvironment) {
   // Get the MINTER_ROLE
   const MINTER_ROLE = await contract.MINTER_ROLE();
 
-  // Grant the MINTER_ROLE to the new address
-  console.log(`Granting MINTER_ROLE to ${newMinterAddress}...`);
-  const tx = await contract.grantRole(MINTER_ROLE, newMinterAddress);
+  // Revoke the MINTER_ROLE from the address
+  console.log(`Revoking MINTER_ROLE from ${minterToRevokeAddress}...`);
+  const tx = await contract.revokeRole(MINTER_ROLE, minterToRevokeAddress);
   await tx.wait();
 
-  console.log(`MINTER_ROLE successfully granted to ${newMinterAddress}`);
+  console.log(`MINTER_ROLE successfully revoked from ${minterToRevokeAddress}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
